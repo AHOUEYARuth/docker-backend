@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  backend:
+    image: DockerFile
+    build: ./backend
+    container_name: backend-container
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb+srv://ruahoueha:qsdfghjklm145@course.47owdoo.mongodb.net/dockertodo
+    networks:
+      - backend
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:4.0.8
+    ports:
+      - '27017:27017'
+    container_name: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ruahoueha
+      MONGO_INITDB_ROOT_PASSWORD: qsdfghjklm145
+      MONGO_INITDB_DATABASE: dockertodo
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - backend
+
+  frontend:
+    image: DockerFile
+    build: ./frontend
+    container_name: frontend-container
+    ports:
+      - "3001:30001"
+    networks:
+      - frontend
+    depends_on:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+  mongodbdata:
